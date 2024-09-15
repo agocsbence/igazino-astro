@@ -21,6 +21,10 @@ export default defineConfig({
     skipInline: false,
     drafts: true
   },
-  site: 'https://lexingtonthemes.com',
+  image: {
+    domains: ["igazino.hu"],
+    remotePatterns: [{ protocol: "https" }],
+  },
+  site: 'https://igazino.hu',
   integrations: [sitemap(), mdx()]
 });

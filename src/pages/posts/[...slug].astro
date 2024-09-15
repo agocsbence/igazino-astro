@@ -1,15 +1,68 @@
 ---
-import { getCollection } from 'astro:content';
-import MarkdownPostLayout from '../../layouts/MarkdownPostLayout.astro';
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import Image from "astro/components/Image.astro";
+const { slug } = Astro.params;
+
+let res = await fetch(`https://igazino.hu/wp-json/wp/v2/posts?slug=${slug}&_embed`);
+let [post] = await res.json();
+
+let data2 = await fetch(`https://igazino.hu/wp-json/wp/v2/tags?slug=${slug}&_embed`);
+let tags = await data2.json();
+
 export async function getStaticPaths() {
-  const blogEntries = await getCollection('posts');
-  return blogEntries.map(entry => ({
-    params: { slug: entry.slug }, props: { entry },
+  let data = await fetch("https://igazino.hu/wp-json/wp/v2/posts?_embed");
+  let posts = await data.json();
+
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post: post },
   }));
 }
-const { entry } = Astro.props;
-const { Content } = await entry.render();
 ---
-<MarkdownPostLayout frontmatter={entry.data}>
-  <Content />
-</MarkdownPostLayout>
+<BaseLayout>
+  <section>
+    <div class="px-8 py-12 md:px-12 mx-auto lg:pt-24 max-w-7xl lg:px-32">
+      <div class="lg:text-center">
+        <Image 
+          src={post._embedded["wp:featuredmedia"][0].media_details.sizes.medium.source_url}
+          alt={post._embedded["wp:featuredmedia"][0].caption.rendered}
+          inferSize
+          class="lg:h-72 w-full object-cover object-center"
+        />
+        <div class="flex flex-col md:flex-row mt-4 justify-between">
+          <p class="text-xs text-zinc-500">
+            {post.date.toString().slice(0, 10)} - Írta: {
+              post._embedded.author[0].name
+            }
+          </p>
+          <div class="flex gap-3">
+            <span class="inline-flex items-center uppercase    hover:text-blue-500   text-xs font-medium text-black">
+              <a href="">esszencia</a>
+            </span>
+            {
+              tags.map((tag) => (
+                <span class="inline-flex items-center uppercase    hover:text-blue-500   text-xs font-medium text-black">
+                  <a href={`/tags/${tag.slug}`}>{tag.name}</a>
+                </span>
+              ))
+            }
+          </div>
+        </div>
+        <h1
+          class="text-4xl tracking-tight text-balance mt-12 lg:mt-16 font-medium font-display text-black md:text-8xl">
+          {post.title.rendered}
+        </h1>
+        <div class="max-w-2xl mt-8 mx-auto text-zinc-500">
+          {post.content.rendered}
+        </div>
+      </div>
+
+      <div class="mt-12 max-w-2xl mx-auto">
+        <div
+          class="text-sm prose text-neutral-600 prose-a:font-normal prose-a:text-blue-400 hover:prose-a:text-black prose-h1:text-black prose-img:border-2 prose-img:bg-neutral-50 prose-img:border-transparent prose-h2:text-black prose-h2:font-semibold prose-p:text-sm prose-pre:font-mono max-w-none prose-pre:rounded-none prose-headings:font-display">
+          <slot />
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
