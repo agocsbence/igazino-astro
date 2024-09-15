@@ -6,8 +6,8 @@ const { slug } = Astro.params;
 let res = await fetch(`https://igazino.hu/wp-json/wp/v2/posts?slug=${slug}&_embed`);
 let [post] = await res.json();
 
-let data2 = await fetch(`https://igazino.hu/wp-json/wp/v2/tags?slug=${slug}&_embed`);
-let tags = await data2.json();
+let data2 = await fetch(`https://igazino.hu/wp-json/wp/v2/categories?slug=${slug}&_embed`);
+let cats = await data2.json();
 
 export async function getStaticPaths() {
   let data = await fetch("https://igazino.hu/wp-json/wp/v2/posts?_embed");
@@ -37,24 +37,15 @@ export async function getStaticPaths() {
           </p>
           <div class="flex gap-3">
             <span class="inline-flex items-center uppercase    hover:text-blue-500   text-xs font-medium text-black">
-              <a href="">esszencia</a>
+              <a href={post._embedded["wp:term"][0][0].link}>{post._embedded["wp:term"][0][0].name}</a>
             </span>
-            {
-              tags.map((tag) => (
-                <span class="inline-flex items-center uppercase    hover:text-blue-500   text-xs font-medium text-black">
-                  <a href={`/tags/${tag.slug}`}>{tag.name}</a>
-                </span>
-              ))
-            }
           </div>
         </div>
         <h1
           class="text-4xl tracking-tight text-balance mt-12 lg:mt-16 font-medium font-display text-black md:text-8xl">
           {post.title.rendered}
         </h1>
-        <div class="max-w-2xl mt-8 mx-auto text-zinc-500">
-          {post.content.rendered}
-        </div>
+        <div class="max-w-2xl mt-8 mx-auto text-zinc-500" set:html={post.content.rendered} />
       </div>
 
       <div class="mt-12 max-w-2xl mx-auto">

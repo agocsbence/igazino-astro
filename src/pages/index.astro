@@ -6,8 +6,8 @@ import Cta from "@/components/global/Cta.astro";
 
 const res = await fetch("https://igazino.hu/wp-json/wp/v2/posts?_embed");
 const posts = await res.json();
-const res2 = await fetch("https://igazino.hu/wp-json/wp/v2/tags?_embed");
-const tags = await res2.json();
+const res2 = await fetch("https://igazino.hu/wp-json/wp/v2/categories?_embed&exclude[0]=1&exclude[1]=1186");
+const cats = await res2.json();
 ---
 
 <BaseLayout>
@@ -17,9 +17,9 @@ const tags = await res2.json();
 
       <ol role="list" class="flex flex-wrap gap-3">
         {
-          tags.map((tag) => (
+          cats.map((cat) => (
             <li class="inline-flex items-center uppercase mx-auto hover:text-blue-500 text-xs font-medium text-black">
-              <a href={`/tags/${tag.slug}`}>{tag.name}</a>
+              <a href={`/rovat/${cat.slug}`}>{cat.name}</a>
             </li>
           ))
         }
