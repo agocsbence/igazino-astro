@@ -1,3 +1,8 @@
+---
+const res = await fetch("https://igazino.hu/wp-json/wp/v2/pages?include[0]=56&include[1]=370&include[2]=8932");
+const pages = await res.json();
+---
+
 <footer class="bg-white border-t border-zinc-200">
   <div class="px-8 md:px-12 mx-auto max-w-7xl py-6 lg:px-32">
     <section class="gap-y-6 gap-x-8">
@@ -6,15 +11,10 @@
           class="text-sm text-zinc-600 lg:col-span-2"
           x-data="{ year: new Date().getFullYear() }"
         >
-          © <span x-text="year"></span> Lexington Themes. All rights reserved. <a
-            class="text-sm text-black hover:text-accent-400 underline"
-            href="https://lexingtonthemes.com/">Lexington Themes</a
-          > is not affiliated with Astro or Tailwind Labs team, nor is it endorsed
-          by or sponsored by these ones. A free template by <a
-            class="text-sm text-black hover:text-accent-400 underline"
-            href="https://michaelandreuzza.com/">Michael Andreuzza</a
-          >. This website was built with Astro &amp; Tailwind. Crafted in Åland
-          Islands, Finland.
+          © <span x-text="year"></span> devConcept - Minden jog fenntartva.
+          <a href={pages[0].link}>{pages[0].title.rendered} - </a>
+          <a href={pages[1].link}>{pages[1].title.rendered} - </a>
+          <a href={pages[2].link}>{pages[2].title.rendered}</a>
         </p>
       </div>
     </section>
